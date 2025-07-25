@@ -1,9 +1,11 @@
 import React from 'react';
 import { Home, User, CreditCard, Wallet, FileText, MessageSquare, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navigation = () => {
   const location = useLocation();
+  const { logout } = useAuth();
   
   const navItems = [
     { icon: Home, label: 'Dashboard', path: '/', active: location.pathname === '/' },
@@ -16,10 +18,8 @@ const Navigation = () => {
   ];
 
   const handleSignOut = () => {
-    // Add sign out logic here - for now just show an alert
     if (confirm('Are you sure you want to sign out?')) {
-      alert('Sign out successful! You would be redirected to login page.');
-      // In a real app, you would clear auth tokens and redirect to login
+      logout();
     }
   };
 
