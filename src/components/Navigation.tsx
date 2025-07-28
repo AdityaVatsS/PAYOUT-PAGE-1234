@@ -17,9 +17,9 @@ const Navigation = () => {
     { icon: MessageSquare, label: 'Complain Report', path: '/complain-report', active: location.pathname === '/complain-report' },
   ];
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     if (confirm('Are you sure you want to sign out?')) {
-      logout();
+      await logout();
     }
   };
 

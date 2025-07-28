@@ -14,7 +14,19 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
+
+  // Show loading spinner while checking auth state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-hero-accent/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -27,10 +39,11 @@ const Login = () => {
     setError('');
     
     try {
-      const success = await login(email, password);
-      if (!success) {
-        setError('Invalid email or password');
+      const result = await login(email, password);
+      if (!result.success) {
+        setError(result.error || 'Login failed');
       }
+      // If successful, user will be redirected automatically by the auth state change
     } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -110,13 +123,12 @@ const Login = () => {
               </Button>
             </form>
 
-            {/* Demo credentials info */}
+            {/* Sign up info */}
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm font-medium text-foreground mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-sm text-muted-foreground">
-                <p>Email: demo@example.com</p>
-                <p>Password: password</p>
-              </div>
+              <p className="text-sm font-medium text-foreground mb-2">New to our platform?</p>
+              <p className="text-sm text-muted-foreground">
+                Create an account using any email and password above. Your account will be created automatically when you sign in.
+              </p>
             </div>
 
             <div className="mt-4 text-center">
