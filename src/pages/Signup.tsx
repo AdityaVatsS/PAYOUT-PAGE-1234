@@ -5,16 +5,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, UserPlus } from 'lucide-react';
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   
-  const { login, isAuthenticated, loading } = useAuth();
+  const { signup, isAuthenticated, loading } = useAuth();
 
   // Show loading spinner while checking auth state
   if (loading) {
@@ -37,13 +40,29 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccess(false);
+    
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
     
     try {
-      const result = await login(email, password);
+      const result = await signup(email, password);
       if (!result.success) {
-        setError(result.error || 'Login failed');
+        setError(result.error || 'Signup failed');
+      } else {
+        setSuccess(true);
       }
-      // If successful, user will be redirected automatically by the auth state change
     } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -51,21 +70,47 @@ const Login = () => {
     }
   };
 
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-hero-accent/20 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card className="shadow-lg">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="w-8 h-8 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Check Your Email</h2>
+              <p className="text-muted-foreground mb-6">
+                We've sent you a confirmation link at <strong>{email}</strong>. 
+                Please check your email and click the link to verify your account.
+              </p>
+              <Link to="/login">
+                <Button className="w-full">
+                  Back to Sign In
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-hero-accent/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+            <UserPlus className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
+          <h1 className="text-3xl font-bold text-foreground">Create Account</h1>
+          <p className="text-muted-foreground mt-2">Sign up to get started</p>
         </div>
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">Sign In</CardTitle>
+            <CardTitle className="text-center">Sign Up</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,9 +139,10 @@ const Login = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder="Create a password"
                     className="pl-10 pr-10"
                     required
+                    minLength={6}
                   />
                   <button
                     type="button"
@@ -104,6 +150,30 @@ const Login = () => {
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative mt-1">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm your password"
+                    className="pl-10 pr-10"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
@@ -119,30 +189,22 @@ const Login = () => {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing in...' : 'Sign In'}
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
 
-            {/* Sign up info */}
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm font-medium text-foreground mb-2">New to our platform?</p>
-              <p className="text-sm text-muted-foreground">
-                Create an account using any email and password above. Your account will be created automatically when you sign in.
-              </p>
-            </div>
-
             <div className="mt-4 text-center">
-              <a href="#" className="text-sm text-primary hover:underline">
-                Forgot your password?
-              </a>
+              <p className="text-sm text-muted-foreground">
+                By signing up, you agree to our terms of service and privacy policy.
+              </p>
             </div>
           </CardContent>
         </Card>
 
         <div className="text-center mt-6 text-sm text-muted-foreground">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-primary hover:underline">
-            Sign up here
+          Already have an account?{' '}
+          <Link to="/login" className="text-primary hover:underline">
+            Sign in here
           </Link>
         </div>
       </div>
@@ -150,4 +212,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
