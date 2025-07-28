@@ -63,8 +63,9 @@ const Signup = () => {
       } else {
         setSuccess(true);
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      setError(err.message || 'Network error occurred. Please check your connection.');
     } finally {
       setIsLoading(false);
     }
