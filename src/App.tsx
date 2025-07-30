@@ -14,6 +14,7 @@ import PayOut from "./pages/PayOut";
 import LoadWallet from "./pages/LoadWallet";
 import TransactionSummary from "./pages/TransactionSummary";
 import ComplainReport from "./pages/ComplainReport";
+import MusicPlayerPage from "./pages/MusicPlayerPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,11 @@ const App = () => (
             <Route path="/complain-report" element={
               <ProtectedRoute>
                 <ComplainReport />
+              </ProtectedRoute>
+            } />
+            <Route path="/music" element={
+              <ProtectedRoute>
+                <MusicPlayerPage />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
