@@ -15,6 +15,8 @@ import LoadWallet from "./pages/LoadWallet";
 import TransactionSummary from "./pages/TransactionSummary";
 import ComplainReport from "./pages/ComplainReport";
 import MusicPlayerPage from "./pages/MusicPlayerPage";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +69,16 @@ const App = () => (
             <Route path="/music" element={
               <ProtectedRoute>
                 <MusicPlayerPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/products" element={
+              <ProtectedRoute>
+                <Products />
+              </ProtectedRoute>
+            } />
+            <Route path="/products/:id" element={
+              <ProtectedRoute>
+                <ProductDetail />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

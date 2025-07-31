@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, User, CreditCard, Wallet, FileText, MessageSquare, LogOut } from 'lucide-react';
+import { Home, User, CreditCard, Wallet, FileText, MessageSquare, LogOut, ShoppingBag } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -9,6 +9,7 @@ const Navigation = () => {
   
   const navItems = [
     { icon: Home, label: 'Dashboard', path: '/', active: location.pathname === '/' },
+    { icon: ShoppingBag, label: 'Products', path: '/products', active: location.pathname.startsWith('/products') },
     { icon: User, label: 'Account Details', path: '/account-details', active: location.pathname === '/account-details' },
     { icon: CreditCard, label: 'Load Account Details', path: '/load-account-details', active: location.pathname === '/load-account-details' },
     { icon: CreditCard, label: 'Pay-Out', path: '/pay-out', active: location.pathname === '/pay-out' },
